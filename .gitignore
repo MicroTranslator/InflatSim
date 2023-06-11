@@ -1,0 +1,9 @@
+.direnv
+result
+
+simulate
+instrument.so
+*.d
+
+analysis.txt
+trace.txt

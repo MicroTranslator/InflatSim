@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+DEFLATE_ROOT=$(dirname $(realpath $0))
+DEFLATE=${DEFLATE:=${DEFLATE_ROOT}/simulate}
+QEMU_X86_64=${QEMU_X86_64:=qemu-x86_64}
+
+TRACE_FILE=trace.txt
+ANALYSIS_FILE=analysis.txt
+BT=ideal
+usage() {
+    echo "${0##*/}: decompose the DBT inflation"
+    echo "Usage: ${0##*/} [-h] [-v] [-f <TRACE_FILE>] [-o <ANALYSIS_FILE>] [-t <BT>] -- <COMMAND>"
+    echo "  -h: show this message"
+    echo "  -v: output verbose analysis"
+    echo "  -f <TRACE_FILE>: the output path for trace file"
+    echo "     default: ${TRACE_FILE}"
+    echo "  -o <ANALYSIS_FILE>: the output path for analysis file"
+    echo "     default: ${ANALYSIS_FILE}"
+    echo "  -t <BT>: binary translator to be simulated"
+    echo "     available: ideal, exagear, rosetta, latx"
+    echo "     default: ${BT}"
+    exit 1
+}
+
+options=$(getopt -o hvfot -- "$@")
+[ $? -eq 0 ] || usage
+eval set -- "$options"
+while true; do
+    case $1 in
+    -h)
+        usage
+    ;;
+    -v)
+        VERBOSE=-v
+    ;;
+    -f)
+        shift
+        TRACE_FILE=$1
+    ;;
+    -o)
+        shift
+        ANALYSIS_FILE=$1
+    ;;
+    -t)
+        shift
+        BT=$1
+    ;;
+    --)
+        shift
+        break
+    ;;
+    esac
+    shift
+done
+if [[ -z $1 ]]; then
+    usage
+fi
+
+# instrument
+${QEMU_X86_64} -d plugin -D ${TRACE_FILE} -plugin ${DEFLATE_ROOT}/instrument.so "$(command -v $1)" "${@:2}"
+
+${DEFLATE} -f ${TRACE_FILE} -t ideal ${VERBOSE} > ${ANALYSIS_FILE}
+echo
+echo "Analysis summary:"
+tail -n1 ${ANALYSIS_FILE}
