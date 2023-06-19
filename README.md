@@ -1,4 +1,6 @@
-## What is InflatSim?🚀:
+## InflatSim🎈🖥️
+
+![](./pictures/InflatSim.svg)
 
 InflatSim is a trace-based inflation simulator designed to decompose translation inflation in Dynamic Binary Translation (DBT).
 It is agnostic to both Instruction Set Architecture (ISA) and Dynamic Binary Translation (DBT) technology, making it a versatile tool.
