@@ -1,3 +1,5 @@
+This is the repo for the journal essay: [An Instruction Inflation Analyzing Framework for Dynamic Binary Translators](https://doi.org/10.1145/3640813).
+
 ## InflatSim🎈🖥️
 
 ![](./pictures/InflatSim.svg)
